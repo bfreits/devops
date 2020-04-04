@@ -10,38 +10,38 @@ provider "aws" {
 }
 
 resource "aws_alb" "alb" {
-	name = "AppColetaTwiter"
+	name = "AppColetaTwiterALB"
         internal = false
         load_balancer_type = "application"
         security_groups = ["sg-0a9dc6760875a9dab"]
         subnets = ["subnet-bdb6429c", "subnet-bd784583"]
 }
 
-resource "aws_alb_target_group_attachment" "alb" {
+resource "aws_alb_listener" "alb" {
+        load_balancer_arn = "${aws_alb.alb.arn}"
+        port = "80"
+        protocol = "HTTP"
+        default_action {
+                type = "forward"
+                target_group_arn = "${aws_alb_target_group.alb.arn}"
+                }
+}
+
+resource "aws_alb_target_group" "alb" {
+        name = "alb"
+        port = 80
+        protocol = "HTTP"
+        target_type = "instance"
+        vpc_id = "vpc-25271d5f"
+}
+
+/*resource "aws_alb_target_group_attachment" "alb" {
 	target_group_arn = "${aws_alb_target_group.alb.arn}"
 	target_id = "${aws_instance.AppColetaTwiter.id}"
 	port = "80"
 }
 
-resource "aws_alb_listener" "alb" {
-	load_balancer_arn = "${aws_alb.alb.arn}"
-	port = "80"
-	protocol = "HTTP"
-	default_action {
-		type = "forward"
-		target_group_arn = "${aws_alb_target_group.alb.arn}"
-		}
-	}
-
-resource "aws_alb_target_group" "alb" {
-	name = "alb"
-	port = 80
-	protocol = "HTTP"
-	target_type = "instance"
-	vpc_id = "vpc-25271d5f"
-}
-
-/*resource "aws_launch_template" "AppColetaTwiter" {
+resource "aws_launch_template" "AppColetaTwiter" {
 	name_prefix = "AppColetaTwiter"
 	image_id = var.AMI_ID
 	instance_type = "t2.micro"
