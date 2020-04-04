@@ -75,12 +75,12 @@ resource "aws_autoscaling_group" "Scaling" {
 		value = "AppColetaTwiter"
 		propagate_at_launch = true
 	}
+}
 
 /*launch_template {
 		id = "${aws_launch_template.AppColetaTwiter.id}"
 		version = "$Latest"
-		}*/
-}
+		}
 
 resource "aws_instance" "AppColetaTwiter" {
 	ami = var.AMI_ID
@@ -92,4 +92,4 @@ resource "aws_instance" "AppColetaTwiter" {
 	tags = {
 		Name = "AppColetaTwiter"
 	 }
-}
+}*/
