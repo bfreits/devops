@@ -17,10 +17,10 @@ resource "aws_alb" "alb" {
         subnets = ["subnet-bdb6429c", "subnet-bd784583"]
 }
 
-resource "aws_lb_target_group_attachment" "albt" {
-	target_group_arn = "${aws_lb_target_group.alb.arn}"
+resource "aws_alb_target_group_attachment" "alb" {
+	target_group_arn = "${aws_alb_target_group.alb.arn}"
 	target_id = "${aws_instance.AppColetaTwiter.id}"
-	port = 80
+	port = "80"
 }
 
 resource "aws_alb_listener" "alb" {
@@ -29,15 +29,57 @@ resource "aws_alb_listener" "alb" {
 	protocol = "HTTP"
 	default_action {
 		type = "forward"
-		target_group_arn = "${aws_lb_target_group.alb.arn}"
+		target_group_arn = "${aws_alb_target_group.alb.arn}"
 		}
 	}
 
-resource "aws_lb_target_group" "alb" {
+resource "aws_alb_target_group" "alb" {
 	name = "alb"
 	port = 80
 	protocol = "HTTP"
+	target_type = "instance"
 	vpc_id = "vpc-25271d5f"
+}
+
+/*resource "aws_launch_template" "AppColetaTwiter" {
+	name_prefix = "AppColetaTwiter"
+	image_id = var.AMI_ID
+	instance_type = "t2.micro"
+}
+*/
+
+resource "aws_autoscaling_attachment" "asg" {
+	autoscaling_group_name = "${aws_autoscaling_group.Scaling.id}"
+	alb_target_group_arn = "${aws_alb_target_group.alb.arn}"
+}
+
+resource "aws_launch_configuration" "AppColetaTwiter" {
+	name_prefix = "AppColetaTwiter"
+	image_id = var.AMI_ID
+	instance_type = "t2.micro"
+	key_name = var.KEY_NAME
+	security_groups = ["sg-0a9dc6760875a9dab"]
+	associate_public_ip_address = false
+}
+
+resource "aws_autoscaling_group" "Scaling" {
+	availability_zones = ["us-east-1"]
+	desired_capacity = 2
+	max_size = 3
+	min_size = 1
+	vpc_zone_identifier = ["subnet-bdb6429c", "subnet-bd784583"]
+	launch_configuration =  "${aws_launch_configuration.AppColetaTwiter.name}"
+	force_delete = true
+	tag {
+		key = "Name"
+		value = "AppColetaTwiter"
+		propagate_at_launch = true
+	}
+
+/*launch_template {
+		id = "${aws_launch_template.AppColetaTwiter.id}"
+		version = "$Latest"
+		}*/
 }
 
 resource "aws_instance" "AppColetaTwiter" {
