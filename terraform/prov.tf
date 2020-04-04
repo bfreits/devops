@@ -64,8 +64,8 @@ resource "aws_launch_configuration" "AppColetaTwiter" {
 
 resource "aws_autoscaling_group" "Scaling" {
 	availability_zones = ["us-east-1"]
-	desired_capacity = 2
-	max_size = 3
+	desired_capacity = 1
+	max_size = 1
 	min_size = 1
 	vpc_zone_identifier = ["subnet-bdb6429c", "subnet-bd784583"]
 	launch_configuration =  "${aws_launch_configuration.AppColetaTwiter.name}"
