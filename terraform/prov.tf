@@ -35,19 +35,6 @@ resource "aws_alb_target_group" "alb" {
         vpc_id = "vpc-25271d5f"
 }
 
-/*resource "aws_alb_target_group_attachment" "alb" {
-	target_group_arn = "${aws_alb_target_group.alb.arn}"
-	target_id = "${aws_instance.AppColetaTwiter.id}"
-	port = "80"
-}
-
-resource "aws_launch_template" "AppColetaTwiter" {
-	name_prefix = "AppColetaTwiter"
-	image_id = var.AMI_ID
-	instance_type = "t2.micro"
-}
-*/
-
 resource "aws_autoscaling_attachment" "asg" {
 	autoscaling_group_name = "${aws_autoscaling_group.Scaling.id}"
 	alb_target_group_arn = "${aws_alb_target_group.alb.arn}"
@@ -77,19 +64,3 @@ resource "aws_autoscaling_group" "Scaling" {
 	}
 }
 
-/*launch_template {
-		id = "${aws_launch_template.AppColetaTwiter.id}"
-		version = "$Latest"
-		}
-
-resource "aws_instance" "AppColetaTwiter" {
-	ami = var.AMI_ID
-	instance_type = "t2.micro"
-	key_name = var.KEY_NAME
-	subnet_id = "subnet-bdb6429c"
-	security_groups = ["sg-0a9dc6760875a9dab"]
-	associate_public_ip_address = false 
-	tags = {
-		Name = "AppColetaTwiter"
-	 }
-}*/
