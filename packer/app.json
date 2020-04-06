@@ -26,7 +26,17 @@
        "provisioners":[{
                 "type": "shell",
                "script": "setup_nginx.sh"
-       }]
+       }],
+       	    
+       "provisioners":[{
+	       "type": "shell",
+	       "script": "setup_s3.sh"
+	}],
+
+	"provisioners":[{
+		"type": "shell",
+       		"script": "setup_git.sh"
+	}]
 }
 
 
